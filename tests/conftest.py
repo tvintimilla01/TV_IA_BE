@@ -1,12 +1,11 @@
 import pytest
-from api.models import Recipe
-from api import db, app
-
+from cook_api.models import Recipe
+from cook_api import db, app
 
 @pytest.fixture
 def testing_client(scope='module'):
     db.create_all()
-    recipe = Recipe('Testing Recipe', 'Testing Ingredients', 'Testing Steps', 1, True)
+    recipe = Recipe('Test Recipe', 'Test Ingredients', 'Test Steps', 5, True)
     db.session.add(recipe)
     db.session.commit()
 

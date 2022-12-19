@@ -4,7 +4,7 @@ import os
 load_dotenv()
 
 class Config(object):
-    SECRET_KEY = 'TV-secret-key'
+    SECRET_KEY = 'tvintimilla-secret-key'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class ProductionConfig(Config):

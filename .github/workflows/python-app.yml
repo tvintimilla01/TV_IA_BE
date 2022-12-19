@@ -1,4 +1,4 @@
-name: Recipe app - BE
+name: Recipe Backend
 
 on:
   push:
@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
   workflow_dispatch:
+
+
 
 permissions:
   contents: read
@@ -43,7 +45,37 @@ jobs:
         name: python-app
         path: |
           . 
-          
+  deploy-prod:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      ENV: prod
+      DBUSER: postgres@jseijas-dbsrv.postgres.database.azure.com
+      DBPASS: Pa$$w0rd1990
+      DBHOST: jseijas-dbsrv.postgres.database.azure.com
+      DBNAME: tvintimilla-assignment-db
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v2
+      with:
+        name: python-app
+        path: .
+    
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Deploy to Azure Web App'
+      uses: azure/webapps-deploy@v2
+      id: deploy-to-webapp
+      with:
+        app-name: 'tvinti-assignment-be'
+
   deploy-dev:
     if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
@@ -73,4 +105,4 @@ jobs:
       uses: azure/webapps-deploy@v2
       id: deploy-to-webapp
       with:
-        app-name: 'tvinti-assignement-be'  
+        app-name: 'tvinti-assignment-be'
